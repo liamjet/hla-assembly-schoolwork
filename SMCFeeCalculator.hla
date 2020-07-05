@@ -1,0 +1,148 @@
+// Name: Liam Pang-Naylor
+// Section: 1235
+// Date: 6/28/2020
+// Purpose: Calculates student enrollment fees at SMC through basic integer arithmetic
+// Input: Hexidecimal value with bits providing semester, number of enrolled units, and whether resident or not
+// Output: The above information and how much the total fees are
+
+// File:SMCFeeCalculator.hla
+
+program SMCFeeCalculator;
+
+#include ("stdlib.hhf");
+
+// Declare all variables for total, units, enrollment fees, student service 
+// fees, and parking (for each set of numbers)
+static
+	total : int32:= 0;
+	numUnits : int8;
+	enrollFee : int32;
+	studserFee : int32;
+	parkingFee : int32 := 0;
+	enrollFeeRes : int32 := 46;
+	enrollFeeNoRes : int32 := 370;
+	studserFeeFS : int32 := 55;
+	studserFeeWS : int32 := 52;
+	parkingFeeFS : int32 := 85;
+	parkingFeeWS : int32 := 45;
+// Incremental variable for the for loop
+	i : int8 := 0;
+
+begin SMCFeeCalculator;
+
+// Request input and send to registries
+	stdout.put("Feed me (2 hex digits with bits prsseeee): ");
+	stdin.get(BL); 			// Send input to BL 8 bit registry
+	mov(total, ECX); 		// Send the total variable to ECX 32 bit registry
+	mov(BL, AL); 			// Send the input in BL registry to AL registry for shifting
+	
+	shr(4,AL);				// Shift 4 right to scan semester
+	and(%0000_0011, AL);	// Only include digits related to semester
+	cmp(AL, %00);			// Check for Fall
+	je Fall;
+	cmp(AL, %10);			// Check for Spring
+	je Spring;				
+	jl Winter;				// Less than must be Winter
+	jg Summer;				// Greater than must be Summer
+	
+// All semester labels. Each label does sends the correct semester dependent variable to
+// the general variable for calculations. Then we jump to units. I will comment Fall only.
+	Fall:
+		stdout.put("Fall Semester", nl);	// Print
+		mov(studserFeeFS,studserFee);		// Move F/S student services fee to general variable
+		jmp Units;							// Jump to units
+	Winter:
+		stdout.put("Winter Semester", nl);
+		mov(studserFeeWS,studserFee);
+		jmp Units;
+	Spring:
+		stdout.put("Spring Semester", nl);
+		mov(studserFeeFS,studserFee);
+		jmp Units;
+	Summer:
+		stdout.put("Summer Semester", nl);
+		mov(studserFeeWS,studserFee);
+		jmp Units;
+		
+// Prints the number of units and saves that number into numUnits for later use
+	Units:
+		mov(BL, AL);				// Move BL into AL again
+		and(%0000_1111, AL);		// Remove all but last four digits
+		mov(AL,numUnits);			// Send AL to numUnits for calculations later
+		stdout.puti8(AL);			// Print the number of units
+		stdout.put(" units", nl);
+
+//Determines residency or non-residency and saves info for later use
+	Residency:
+		mov(BL, AL);				// Move BL into AL again
+		shr(6, AL);					// Shift 6 to the right 
+		and(%0000_0001, AL);		// Remove all but last digit
+		cmp(AL,%1);					// Compare with 1 to determine if resident or not
+		je Resident;
+		jmp NonResident;
+		
+	// Resident and Non-Resident labels. Both print whether Resident or not and 
+	// sends the appropriate data to the general variable. I'll only comment Resident.
+		Resident:							
+			stdout.put("CA Resident",nl);	// Print California Resident
+			mov(enrollFeeRes,enrollFee);	// Move residential enrollment fees to general variable
+			jmp Parking;					// Jump to parking label
+		NonResident:
+			stdout.put("Non-Resident",nl);
+			mov(enrollFeeNoRes,enrollFee);
+			jmp Parking;
+
+// Determines if buying parking or not and saves for later use
+	Parking:
+		mov(BL, AL);			// Move BL into AL again
+		shr(7, AL);				// Shift 7 right
+		and(%0000_0001, AL);	// Remove all but last digit
+		cmp(AL,%1);				// Compare with 1 to find if buying parking or not
+		je Permit;
+		jmp NoPermit;
+		
+	//Permit and NoPermit labels for parking. Print necessary data and continue to FeeCalc	
+		Permit:
+			stdout.put("Parking",nl);	// Print
+			mov(BL, AL);				// Move BL into AL again
+			shr(4, AL);					// Shift right 4 times
+			and(%0000_0011, AL);		//Remove all but last 2 digits
+			cmp(AL, %00);				// Check for Fall
+			je ParkingFallSpring;
+			cmp(AL, %10);				// Check for Spring, Winter, and Summer
+			je ParkingFallSpring;				
+			jl ParkingWinterSummer;		
+			jg ParkingWinterSummer;	
+			ParkingFallSpring:
+				mov(parkingFeeFS,parkingFee);	//Move F/S fees into general variable
+				jmp FeeCalc;					// Jump to FeeCalc
+			ParkingWinterSummer:
+				mov(parkingFeeWS,parkingFee);	//Move W/S fees into general variable
+				jmp FeeCalc;					// Jump to FeeCalc
+			
+		NoPermit:
+			stdout.put("No Parking",nl);
+			jmp FeeCalc;
+
+// Final calculation for total fees. Adds fees to ECX (which is the total) and loops in order
+// to multiply units by the correct fee.			
+	FeeCalc:
+		add(studserFee,ECX);		// Add student services fee to ECX
+		add(parkingFee,ECX);		// Add parking fee to ECX
+		InitLoop:					// Begin for loop
+			mov(i, DL);				// Initialize i
+		TestLoop:			
+			cmp(DL, numUnits);		// Test DL (i) for end condition
+			jge EndLoop;
+		BodyLoop:
+			add(enrollFee, ECX);	// Add enrollment fee to ECX
+		IncLoop:
+			inc(DL);				// Increment DL and test for end condition again
+			jmp TestLoop;
+		EndLoop:
+		
+	// Print total fees
+		stdout.put("Total Fees = $ ");
+		stdout.puti32(ECX);
+
+end SMCFeeCalculator;

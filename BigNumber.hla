@@ -1,0 +1,70 @@
+// Name: Liam Pang-Naylor
+// Section: 1235
+// Date: 6/27/2020
+// Purpose: Uses loops to print the odd and then even numbers up to a certain number
+// Input: Integer value
+// Output: All odd and then even numbers up until the given number
+
+// File:BigNumber.hla
+
+program BigNumber;
+
+#include ("stdlib.hhf");
+
+// Declare input variable and incremental variables
+static	
+	n : int8;
+	i : int8 := 1;
+	j : int8 := 2;
+
+begin BigNumber;
+
+// Request input and put in n
+	stdout.put("Gimme a decimal value to use as n: ");
+	stdin.get(n);
+
+// First loop for the odd numbers. Start by sending variable i to CL.
+	OddLoop:
+	InitOddLoop:
+		mov( i, CL);
+
+// Compare CL and n and if CL is greater than n, end the loop with a jump statement
+	TestOddLoop:
+		cmp(CL, n);
+		ja EndOddLoop;
+
+// Loop body prints the incrementing variable
+	BodyOddLoop:
+		stdout.puti8(CL);
+
+// Increment the incrementing variable twice and jump back to the conditional
+	IncOddLoop:
+		inc(CL);
+		inc(CL);
+		jmp TestOddLoop;
+	EndOddLoop:
+
+
+// First loop for the even numbers. Start by sending variable j to CL.
+	EvenLoop:
+	InitEvenLoop:
+		mov(j, BL);
+
+// Compare BL and n and if BL is greater than n, end the loop with a jump statement
+	TestEvenLoop:
+		cmp(BL, n);
+		ja EndEvenLoop;
+
+// Loop body prints the incrementing variable
+	BodyEvenLoop:
+		stdout.puti8(BL);
+
+// Increment the incrementing variable twice and jump back to the conditional
+	IncEvenLoop:
+		inc(BL);
+		inc(BL);
+		jmp TestEvenLoop;
+	EndEvenLoop:
+
+
+end BigNumber;

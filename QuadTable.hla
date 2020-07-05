@@ -1,0 +1,53 @@
+// Name: Liam Pang-Naylor
+// Section: 1235
+// Date: 6/26/2020
+// Purpose: Create a quad table from a single integer
+// Input: One 32 bit integer
+// Output: Quad table with the next two numbers after the input number
+
+// File: QuadTable.hla
+
+program QuadTable;
+
+#include("stdlib.hhf");
+
+// Declare three 32 bit int variables, one for each row of the quad table 
+static	
+	i32Input1 : int32;	
+	i32Input2 : int32;
+	i32Input3: int32;
+	
+begin QuadTable;
+
+// Request starting integer
+	stdout.put("Gimme a starting value: ");
+	stdin.get(i32Input1);
+
+// Increment other two variables to one and two above the original input
+	mov(i32Input1,i32Input2);
+	add( 1, i32Input2);
+	mov(i32Input2,i32Input3);
+	add( 1, i32Input3);
+
+// Display row by first printing input. Then use rol() twice with a count 
+// of two to multiply the original value by four twice and print those 
+// with spaces in between. Repeat twice more for the incremented variables. 
+	stdout.put(i32Input1,": ");
+	rol(2, i32Input1);
+	stdout.put(i32Input1," ");
+	rol(2, i32Input1);
+	stdout.put(i32Input1, nl);
+
+	stdout.put(i32Input2,": ");
+	rol(2, i32Input2);
+	stdout.put(i32Input2," ");
+	rol(2, i32Input2);
+	stdout.put(i32Input2, nl);
+	
+	stdout.put(i32Input3,": ");
+	rol(2, i32Input3);
+	stdout.put(i32Input3," ");
+	rol(2, i32Input3);
+	stdout.put(i32Input3);
+
+end QuadTable;

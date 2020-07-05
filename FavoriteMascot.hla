@@ -1,0 +1,22 @@
+// Name: Liam Pang-Naylor
+// Section: 1235
+// Date: 6/25/2020
+// Purpose: Prints "CORSAIR" in five output statements
+// Input: N/A
+// Output: CORSAIR
+
+// File: FavoriteMascot
+
+program FavoriteMascot;
+#include( "stdlib.hhf" );
+
+begin FavoriteMascot;
+
+stdout.put( "CCCC  OOO  RRR   SSSS  AAA  IIIIII RRRR ", nl );
+stdout.put( "C    O   O R  R S     A   A   I    R   R", nl );
+stdout.put( "C    O   O RRRR  SSS  AAAAA   I    RRRR ", nl );
+stdout.put( "C    O   O R R      S A   A   I    R R  ", nl );
+stdout.put( "CCCC  OOO  R  R SSSS  A   A IIIIII R  R ", nl );
+
+
+end FavoriteMascot;

@@ -1,0 +1,75 @@
+// Name: Liam Pang-Naylor
+// Section: 1235
+// Date: 6/26/2020
+// Purpose: Converts decimal to binary
+// Input: Integer value
+// Output: Equivalent binary value
+
+// File: Decimal2Binary.hla
+
+program Decimal2Binary;
+
+#include("stdlib.hhf");
+
+// 8 bit integer input variable
+static	
+	i8Input : int8;									
+	
+begin Decimal2Binary;
+
+// Request input from user and send the value to register BH
+	stdout.put("Gimme a decimal value to print: ");
+	stdin.get(i8Input);
+	mov(i8Input, BH);
+
+	stdout.put("Number in binary is: ");
+
+// First shift BH 1 left. Then lahf pushes the carried value to
+// AH. The and statement ensures only the rightmost digit of AH 
+// is 1 and then we print it. We do this 8 times in order to 
+// print the whole binary number.
+
+	shl(1, BH); // One
+	lahf();
+	and( %0000_0001, AH );
+	stdout.puti8(AH);
+
+	shl(1, BH); // Two
+	lahf();
+	and( %0000_0001, AH );
+	stdout.puti8(AH);
+
+	shl(1, BH); // Three
+	lahf();
+	and( %0000_0001, AH );
+	stdout.puti8(AH);
+
+	shl(1, BH); // Four
+	lahf();
+	and( %0000_0001, AH );
+	stdout.puti8(AH);
+
+	stdout.put("_"); // Print underscore to separate binary digits
+
+	shl(1, BH); // Five
+	lahf();
+	and( %0000_0001, AH );
+	stdout.puti8(AH);
+
+	shl(1, BH); // Six
+	lahf();
+	and( %0000_0001, AH );
+	stdout.puti8(AH);
+
+	shl(1, BH); // Seven
+	lahf();
+	and( %0000_0001, AH );
+	stdout.puti8(AH);
+
+	shl(1, BH); // Eight
+	lahf();
+	and( %0000_0001, AH );
+	stdout.puti8(AH);
+
+
+end Decimal2Binary;

@@ -1,0 +1,112 @@
+// Name: Liam Pang-Naylor
+// Section: 1235
+// Date: 7/22/2020
+// Purpose: Converts a percentage grade into a letter grade
+// Input: A decimal grade
+// Output: A character letter grade
+
+// File: GradeConverter.hla
+
+program GradeConverter;
+
+#include( "stdlib.hhf" )
+
+// Input variable
+static
+	input : real32;
+
+// Function declaration
+procedure grader( percentage : real32 ); @nodisplay; @noframe;
+
+// Function variables
+static
+	grade : real32;				// Variable to pop argument into
+	gradeA : byte:= $41;		// ASCII codes for A-F grades (not E)
+	gradeB : byte:= $42;
+	gradeC : byte:= $43;
+	gradeD : byte:= $44;
+	gradeF : byte:= $46;
+	iReturnAddress : dword;		// Return address
+	
+begin grader;
+	
+	// Pop return address and grade variable and then push return address
+	pop(iReturnAddress);
+	pop(grade);
+	push(iReturnAddress);
+	
+	// Almost identical blocks for each comparison, I'll comment first block only.
+	A:
+		finit();		// Initialize FPU
+		fld(90.0);		// Compare 90 and grade
+		fld(grade);
+		fcomp();
+		fstsw(ax);		// Copy to AX
+		sahf();			// Copy AX into EFLAGS
+		setb(al);		
+		cmp(al,1);		// Test AL for true
+		je B;			// If true send immediately to next comparison
+		mov(gradeA,AL);	// False case, push gradeA to AL for return
+		jmp EndComp;	// Jump to End Comparison
+	B:
+		finit();
+		fld(80.0);
+		fld(grade);
+		fcomp();
+		fstsw(ax);
+		sahf();
+		setb(al);
+		cmp(al,1);
+		je C;
+		mov(gradeB,AL);
+		jmp EndComp;
+	C:
+		finit();
+		fld(70.0);
+		fld(grade);
+		fcomp();
+		fstsw(ax);
+		sahf();
+		setb(al);
+		cmp(al,1);
+		je D;
+		mov(gradeC,AL);
+		jmp EndComp;
+	D:
+		finit();
+		fld(60.0);
+		fld(grade);
+		fcomp();
+		fstsw(ax);
+		sahf();
+		setb(al);
+		cmp(al,1);
+		je F;
+		mov(gradeD,AL);
+		jmp EndComp;
+	F:
+		mov(gradeF,AL);		//Don't need any comparisons because must be F
+		jmp EndComp;
+		
+	EndComp:
+	ret();
+	
+end grader;
+
+begin GradeConverter;
+
+	// Request input
+	stdout.put("Feed me: ");
+	stdin.get(input);
+	
+	// Push input variable
+	push(input);
+
+	// Call function
+	call grader;
+	
+	// Print result
+	stdout.put("that's the grade: ");
+	stdout.putc(AL);
+
+end GradeConverter;

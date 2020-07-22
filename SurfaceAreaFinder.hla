@@ -1,0 +1,127 @@
+// Name: Liam Pang-Naylor
+// Section: 1235
+// Date: 7/21/2020
+// Purpose: Prints the surface area of a sphere, cube, and cylinder with given values
+// Input: Two decimal values, one for height, one for radius
+// Output: Three decimal values, one of each shape's surface area
+
+// File: SurfaceAreaFinder.hla
+
+program SurfaceAreaFinder;
+
+#include( "stdlib.hhf" )
+
+// Main program input variables
+static
+	r : real32;
+	h : real32;
+	
+// surfaceFinder function definition
+procedure surfaceFinder( r: real32; h : real32 ); @nodisplay; @noframe; 
+
+// surfaceFinder variables
+static	
+	rad : real32; 				// Radius
+	hgt : real32;				// Height
+	sphereArea : real32;		// Sphere surface area
+	cubeArea : real32;			// Cube surface area
+	cylinderArea : real32;		// Cylinder surface area
+	iReturnAddress : dword;		// Return address
+
+// Begin surfaceFinder
+begin surfaceFinder;
+
+	// Pop return address and input variables
+	pop(iReturnAddress);
+	pop(r);
+	pop(h);
+	
+	// Initialize calculation for sphereArea
+	finit();
+	
+	// Calculates r*r
+	fld(r);
+	fld(st0);
+	fmul();
+	
+	// Calculates pi*4.0
+	fldpi();
+	fld(4.0);
+	fmul();
+	
+	// Calculates (r*r)*(pi*4.0)
+	fmul();
+	fstp( sphereArea );	// Send result to sphereArea variable
+	
+	
+	// Initialize calculation for cubeArea
+	finit();
+	
+	// Calculates h*h
+	fld(h);
+	fld(st0);
+	fmul();
+	
+	// Calculates 6.0*(h*h)
+	fld(6.0);
+	fmul();
+	fstp( cubeArea ); // Send result to cubeArea variable
+	
+	
+	// Initialize calculation for cylinderArea
+	finit();
+	
+	// Calculates r+h
+	fld(r);
+	fld(h);
+	fadd();
+	
+	// Calculates r*(r+h)
+	fld(r);
+	fmul();
+	
+	// Calculates pi*r*(r+h)
+	fldpi();
+	fmul();
+	
+	// Calculates 2.0*pi*r*(r+h)
+	fld(2.0);
+	fmul();
+	fstp( cylinderArea ); // Send result to cylinderArea variable
+	
+	// Three blocks of print statements printing data for each surface area. Printing
+	// decimals with 8 width and 5 trailing digits. Commenting for all three blocks here.
+	stdout.put("Surface Area of a sphere = ");
+	stdout.putr32(sphereArea, 8, 5);
+	stdout.put(" square inches",nl);
+	
+	stdout.put("Surface Area of a cube = ");
+	stdout.putr32(cubeArea, 8, 5);
+	stdout.put(" square inches",nl);
+	
+	stdout.put("Surface Area of a cylinder = ");
+	stdout.putr32(cylinderArea, 8, 5);
+	stdout.put(" square inches",nl);
+	
+	ret();
+	
+end surfaceFinder;
+
+
+begin SurfaceAreaFinder;
+
+	// Request input
+	stdout.put("Lemme calculate the volumes of various things in inches!",nl);
+	stdout.put("Gimme r: ");
+	stdin.get(r);
+	stdout.put("Gimme h: ");
+	stdin.get(h);
+
+	// Push input variables backwards onto stack
+	push(h);
+	push(r);
+
+	// Call function
+	call surfaceFinder;
+
+end SurfaceAreaFinder;
